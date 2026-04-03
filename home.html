@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人学习系统 - 首页</title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+        <header class="top-nav">
+            <div class="nav-brand">
+                <span class="brand-icon">📚</span>
+                <span class="brand-text">个人学习系统</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item active">🏠 首页</a>
+                <a href="courses.html" class="nav-item">📖 我的课程</a>
+                <a href="settings.html" class="nav-item">⚙️ 设置</a>
+            </nav>
+            <div class="nav-user">
+                <span class="ai-badge" id="aiStatus">🟢 AI 就绪</span>
+                <a href="auth.html" class="user-login-btn" id="userLoginBtn">👤 登录</a>
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span class="user-name" id="navUserName"></span>
+                    <a href="auth.html" class="btn btn-sm">退出</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-container">
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>🎯 开启你的学习之旅</h1>
+                    <p>AI 驱动的个性化学习系统，根据你的需求生成专属课程</p>
+                    <div class="hero-actions">
+                        <a href="create-course.html" class="btn btn-primary btn-lg">
+                            <span>➕ 创建新课程</span>
+                        </a>
+                        <a href="courses.html" class="btn btn-secondary btn-lg">
+                            <span>📖 查看我的课程</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalCourses">0</span>
+                        <span class="stat-label">总课程</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="completedLessons">0</span>
+                        <span class="stat-label">已完成课时</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="studyStreak">0</span>
+                        <span class="stat-label">连续学习(天)</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalHours">0</span>
+                        <span class="stat-label">总时长(小时)</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="continueSection">
+                <div class="section-header">
+                    <h2>📌 继续学习</h2>
+                    <a href="courses.html" class="link-more">查看全部 →</a>
+                </div>
+                <div class="course-cards" id="continueLearningList"></div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2>⚡ 快速创建</h2>
+                </div>
+                <div class="quick-create-grid">
+                    <a href="create-course.html?template=philosophy" class="quick-card">
+                        <div class="quick-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🎓</div>
+                        <div class="quick-info">
+                            <h3>哲学</h3>
+                            <p>探索思想的深度</p>
+                        </div>
+                    </a>
+                    <a href="create-course.html?template=programming" class="quick-card">
+                        <div class="quick-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">💻</div>
+                        <div class="quick-info">
+                            <h3>编程</h3>
+                            <p>从零开始学习代码</p>
+                        </div>
+                    </a>
+                    <a href="create-course.html?template=history" class="quick-card">
+                        <div class="quick-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🏛️</div>
+                        <div class="quick-info">
+                            <h3>历史</h3>
+                            <p>了解过去的故事</p>
+                        </div>
+                    </a>
+                    <a href="create-course.html?template=art" class="quick-card">
+                        <div class="quick-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🎨</div>
+                        <div class="quick-info">
+                            <h3>艺术</h3>
+                            <p>培养审美与创造力</p>
+                        </div>
+                    </a>
+                    <a href="create-course.html?template=science" class="quick-card">
+                        <div class="quick-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">🔬</div>
+                        <div class="quick-info">
+                            <h3>科学</h3>
+                            <p>探索自然奥秘</p>
+                        </div>
+                    </a>
+                    <a href="create-course.html?template=language" class="quick-card">
+                        <div class="quick-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🌍</div>
+                        <div class="quick-info">
+                            <h3>语言</h3>
+                            <p>学习新语言</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section class="section" id="sampleCoursesSection">
+                <div class="section-header">
+                    <h2>🎁 体验课程</h2>
+                    <span class="section-desc">点击即可开始学习，无需等待生成</span>
+                </div>
+                <div class="course-cards" id="sampleCoursesList"></div>
+            </section>
+
+            <section class="section" id="recentSection">
+                <div class="section-header">
+                    <h2>🕐 最近创建</h2>
+                    <a href="courses.html" class="link-more">查看全部 →</a>
+                </div>
+                <div class="course-list" id="recentCoursesList"></div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2>💡 学习建议</h2>
+                </div>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <span class="tip-icon">🎯</span>
+                        <h3>设定明确目标</h3>
+                        <p>为每门课程设定具体可达成的学习目标，有助于保持学习动力</p>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-icon">⏰</span>
+                        <h3>固定学习时间</h3>
+                        <p>每天固定时间学习，养成习惯后会更轻松</p>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-icon">📝</span>
+                        <h3>做好学习笔记</h3>
+                        <p>记录重点和心得，便于复习和巩固</p>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-icon">🔄</span>
+                        <h3>及时复习</h3>
+                        <p>定期回顾已学内容，加深理解和记忆</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>个人学习系统 v1.0 | 数据存储在本地</p>
+        </footer>
+    </div>
+
+    <script src="js/storage.js?v=104"></script>
+    <script src="js/ai-service.js?v=104"></script>
+    <script src="js/app.js?v=104"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            app.updateNavUser();
+            app.initHomePage();
+        });
+    </script>
+</body>
+</html>
