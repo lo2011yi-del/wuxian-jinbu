@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>服务器测试</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; text-align: center; }
+        .success { color: green; font-size: 24px; }
+        .info { background: #f0f0f0; padding: 20px; border-radius: 8px; margin: 20px; }
+    </style>
+</head>
+<body>
+    <h1 class="success">✅ 服务器运行正常！</h1>
+    <div class="info">
+        <p><strong>当前访问地址：</strong><span id="url"></span></p>
+        <p><strong>协议：</strong><span id="protocol"></span></p>
+    </div>
+    <p>请访问：<a href="/settings.html">设置页面</a></p>
+    <script>
+        document.getElementById('url').textContent = window.location.href;
+        document.getElementById('protocol').textContent = window.location.protocol;
+    </script>
+</body>
+</html>

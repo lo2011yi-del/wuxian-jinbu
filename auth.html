@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 个人学习系统</title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+        }
+        .auth-box {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .auth-logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .auth-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 12px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .auth-tab.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #007AFF, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .guest-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="auth-logo">📚</div>
+                <h1>个人学习系统</h1>
+                <p>AI驱动的个性化学习平台</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="auth.switchTab('login')">登录</button>
+                <button class="auth-tab" onclick="auth.switchTab('register')">注册</button>
+            </div>
+
+            <!-- 登录表单 -->
+            <form id="loginForm" class="auth-form active" onsubmit="auth.handleLogin(event)">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="auth-btn">登录</button>
+            </form>
+
+            <!-- 注册表单 -->
+            <form id="registerForm" class="auth-form" onsubmit="auth.handleRegister(event)">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="registerUsername" placeholder="请设置用户名" required minlength="2">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="registerPassword" placeholder="请设置密码（至少6位）" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <input type="password" id="confirmPassword" placeholder="请再次输入密码" required>
+                </div>
+                <button type="submit" class="auth-btn">注册</button>
+            </form>
+
+            <button class="guest-btn" onclick="auth.enterAsGuest()">👤 暂不登录，直接进入</button>
+        </div>
+    </div>
+
+    <script src="js/storage.js?v=104"></script>
+    <script>
+        const auth = {
+            switchTab(tab) {
+                document.querySelectorAll('.auth-tab').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.auth-form').forEach(el => el.classList.remove('active'));
+                if (tab === 'login') {
+                    document.querySelector('.auth-tab:first-child').classList.add('active');
+                    document.getElementById('loginForm').classList.add('active');
+                } else {
+                    document.querySelector('.auth-tab:last-child').classList.add('active');
+                    document.getElementById('registerForm').classList.add('active');
+                }
+            },
+
+            handleLogin(event) {
+                event.preventDefault();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const result = Storage.login(username, password);
+                if (result.success) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert(result.message);
+                }
+            },
+
+            handleRegister(event) {
+                event.preventDefault();
+                const username = document.getElementById('registerUsername').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                const result = Storage.register(username, password);
+                if (result.success) {
+                    alert('注册成功！请登录');
+                    this.switchTab('login');
+                } else {
+                    alert(result.message);
+                }
+            },
+
+            enterAsGuest() {
+                const guestUser = {
+                    id: 'guest_' + Date.now(),
+                    username: '游客',
+                    isGuest: true
+                };
+                localStorage.setItem('learning_system_current_user', JSON.stringify(guestUser));
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</body>
+</html>

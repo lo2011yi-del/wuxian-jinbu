@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员面板 - 个人学习系统</title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 40px 20px;
+        }
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .admin-header h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .admin-header p {
+            color: #888;
+        }
+        .admin-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .admin-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-hint {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-ok {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #1565c0;
+        }
+        .info-box ol {
+            margin-left: 20px;
+            color: #333;
+        }
+        .info-box li {
+            margin-bottom: 8px;
+        }
+        .code-block {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-page">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1>🔐 管理员面板</h1>
+                <p>配置 AI 服务和管理系统设置</p>
+            </div>
+
+            <!-- 登录表单 -->
+            <div id="loginSection" class="admin-card">
+                <h2>🔑 管理员登录</h2>
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label>管理员密码</label>
+                        <input type="password" id="adminPassword" placeholder="输入管理员密码" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">登录</button>
+                </form>
+            </div>
+
+            <!-- 配置面板 -->
+            <div id="configSection" class="hidden">
+                <!-- 当前状态 -->
+                <div class="admin-card">
+                    <h2>📊 当前状态</h2>
+                    <div id="statusContent">
+                        <p>加载中...</p>
+                    </div>
+                </div>
+
+                <!-- API 配置 -->
+                <div class="admin-card">
+                    <h2>⚙️ AI 服务配置</h2>
+                    <form id="configForm">
+                        <div class="form-group">
+                            <label>AI 提供商</label>
+                            <select id="aiProvider">
+                                <option value="kimi">Kimi (Moonshot)</option>
+                                <option value="openai">OpenAI</option>
+                                <option value="deepseek">DeepSeek</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>API 密钥</label>
+                            <input type="password" id="aiApiKey" placeholder="输入新的 API 密钥（留空保持不变）">
+                            <p class="form-hint">仅在需要更换密钥时填写</p>
+                        </div>
+                        <div class="form-group">
+                            <label>模型名称</label>
+                            <input type="text" id="aiModel" placeholder="例如: moonshot-v1-8k">
+                            <p class="form-hint">Kimi: moonshot-v1-8k / moonshot-v1-32k | OpenAI: gpt-3.5-turbo / gpt-4 | DeepSeek: deepseek-chat</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存配置</button>
+                    </form>
+
+                    <div class="info-box">
+                        <h4>⚠️ 重要提示</h4>
+                        <p>由于 Vercel Serverless Functions 的限制，无法直接通过 API 修改环境变量。</p>
+                        <p>要永久保存配置，请在 Vercel Dashboard 中设置以下环境变量：</p>
+                        <ol>
+                            <li><code>AI_PROVIDER</code> - AI 提供商 (kimi/openai/deepseek)</li>
+                            <li><code>AI_API_KEY</code> - API 密钥</li>
+                            <li><code>AI_MODEL</code> - 模型名称</li>
+                            <li><code>ADMIN_PASSWORD</code> - 管理员密码</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- 测试连接 -->
+                <div class="admin-card">
+                    <h2>🧪 测试连接</h2>
+                    <button id="testConnection" class="btn btn-secondary">测试 AI 连接</button>
+                    <div id="testResult" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const AdminPanel = {
+            isLoggedIn: false,
+
+            init() {
+                this.bindEvents();
+                this.checkLoginStatus();
+            },
+
+            bindEvents() {
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.login();
+                });
+
+                document.getElementById('configForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveConfig();
+                });
+
+                document.getElementById('testConnection').addEventListener('click', () => {
+                    this.testConnection();
+                });
+            },
+
+            async login() {
+                const password = document.getElementById('adminPassword').value;
+                
+                // 尝试获取配置来验证密码
+                try {
+                    const response = await fetch('/api/config', {
+                        headers: {
+                            'X-Admin-Password': password
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        this.isLoggedIn = true;
+                        this.adminPassword = password;
+                        document.getElementById('loginSection').classList.add('hidden');
+                        document.getElementById('configSection').classList.remove('hidden');
+                        this.loadConfig();
+                    } else {
+                        alert('密码错误');
+                    }
+                } catch (error) {
+                    alert('登录失败: ' + error.message);
+                }
+            },
+
+            checkLoginStatus() {
+                // 检查是否有保存的密码
+                const savedPassword = sessionStorage.getItem('admin_password');
+                if (savedPassword) {
+                    this.adminPassword = savedPassword;
+                    this.login();
+                }
+            },
+
+            async loadConfig() {
+                try {
+                    const response = await fetch('/api/config', {
+                        headers: {
+                            'X-Admin-Password': this.adminPassword
+                        }
+                    });
+                    
+                    const config = await response.json();
+                    
+                    // 更新状态显示
+                    const statusHtml = `
+                        <p><strong>AI 提供商:</strong> ${config.provider}</p>
+                        <p><strong>模型:</strong> ${config.model || '默认'}</p>
+                        <p><strong>API 密钥:</strong> ${config.hasKey ? 
+                            '<span class="status-badge status-ok">已配置</span>' : 
+                            '<span class="status-badge status-error">未配置</span>'}</p>
+                    `;
+                    document.getElementById('statusContent').innerHTML = statusHtml;
+                    
+                    // 填充表单
+                    document.getElementById('aiProvider').value = config.provider;
+                    document.getElementById('aiModel').value = config.model || '';
+                } catch (error) {
+                    document.getElementById('statusContent').innerHTML = 
+                        `<span class="status-badge status-error">加载失败: ${error.message}</span>`;
+                }
+            },
+
+            async saveConfig() {
+                const config = {
+                    provider: document.getElementById('aiProvider').value,
+                    model: document.getElementById('aiModel').value,
+                    apiKey: document.getElementById('aiApiKey').value
+                };
+
+                try {
+                    const response = await fetch('/api/config', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Admin-Password': this.adminPassword
+                        },
+                        body: JSON.stringify(config)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        alert('配置已保存（注意：重启后可能需要重新在 Vercel Dashboard 设置）');
+                        this.loadConfig();
+                    } else {
+                        alert('保存失败: ' + result.error);
+                    }
+                } catch (error) {
+                    alert('保存失败: ' + error.message);
+                }
+            },
+
+            async testConnection() {
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.innerHTML = '<p>测试中...</p>';
+
+                try {
+                    const response = await fetch('/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            messages: [
+                                { role: 'user', content: '你好，请回复"连接测试成功"' }
+                            ],
+                            max_tokens: 100
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok && result.success) {
+                        resultDiv.innerHTML = `
+                            <div class="status-badge status-ok">✅ 连接成功</div>
+                            <div class="code-block">${result.content}</div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="status-badge status-error">❌ 连接失败</div>
+                            <div class="code-block">${result.error || JSON.stringify(result)}</div>
+                        `;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `
+                        <div class="status-badge status-error">❌ 连接失败</div>
+                        <div class="code-block">${error.message}</div>
+                    `;
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            AdminPanel.init();
+        });
+    </script>
+</body>
+</html>

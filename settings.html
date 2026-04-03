@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - 个人学习系统</title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .settings-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .settings-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .settings-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .settings-card .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0 0 24px 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            background: white;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        .form-hint {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            display: none;
+        }
+        .test-result.success {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            display: block;
+        }
+        .test-result.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+        .test-result.warning {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            display: block;
+        }
+        .model-select-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .model-select-wrapper select {
+            flex: 1;
+        }
+        .btn-sm {
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <header class="top-nav">
+            <div class="nav-brand">
+                <span class="brand-icon">📚</span>
+                <span class="brand-text">个人学习系统</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">🏠 首页</a>
+                <a href="courses.html" class="nav-item">📖 我的课程</a>
+                <a href="settings.html" class="nav-item active">⚙️ 设置</a>
+            </nav>
+            <div class="nav-user">
+                <a href="auth.html" class="user-login-btn">👤 登录</a>
+            </div>
+        </header>
+
+        <main class="main-container">
+            <div class="settings-wrapper">
+                <!-- 页面标题 -->
+                <div class="page-header" style="margin-bottom: 24px;">
+                    <h1>⚙️ 系统设置</h1>
+                    <p style="color: var(--text-secondary);">管理你的 AI 配置和个人信息</p>
+                </div>
+
+                <!-- AI 设置 -->
+                <div class="settings-card">
+                    <h3>🤖 AI 服务配置</h3>
+                    <p class="card-desc">配置 AI 服务以生成课程内容</p>
+                    
+                    <div class="form-group">
+                        <label for="aiProvider">AI 服务提供商</label>
+                        <select id="aiProvider">
+                            <option value="kimi">Kimi (Moonshot)</option>
+                            <option value="kimi-coding">Kimi Coding (代码专用)</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="deepseek">DeepSeek</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aiApiKey">API Key</label>
+                        <input type="password" id="aiApiKey" placeholder="输入你的 API Key">
+                        <p class="form-hint">你的 API Key 仅存储在本地浏览器中</p>
+                    </div>
+
+                    <div class="form-group" id="customEndpointGroup" style="display: none;">
+                        <label for="customEndpoint">自定义 API 端点</label>
+                        <input type="text" id="customEndpoint" placeholder="例如：https://api.example.com/v1">
+                        <p class="form-hint">仅在使用自定义提供商时需要</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aiModel">模型</label>
+                        <div class="model-select-wrapper">
+                            <select id="aiModel">
+                                <option value="kimi-coding/k2p5">Kimi K2.5</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="app.saveAISettings()">💾 保存 AI 配置</button>
+                        <button class="btn btn-secondary" onclick="app.testAIConnection()">🔌 测试连接</button>
+                    </div>
+
+                    <!-- 测试结果展示区域 -->
+                    <div id="aiTestResult" class="test-result"></div>
+                </div>
+
+                <!-- 数据管理 -->
+                <div class="settings-card">
+                    <h3>💾 数据管理</h3>
+                    <p class="card-desc">备份和恢复你的学习数据</p>
+                    
+                    <div class="settings-actions">
+                        <button class="btn btn-secondary" onclick="app.exportData()">📤 导出数据</button>
+                        <button class="btn btn-secondary" onclick="app.importData()">📥 导入数据</button>
+                        <button class="btn btn-danger" onclick="app.clearAllData()">🗑️ 清除所有数据</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>个人学习系统 v1.0 | 数据存储在本地</p>
+        </footer>
+    </div>
+
+    <script src="js/storage.js?v=104"></script>
+    <script src="js/ai-service.js?v=104"></script>
+    <script src="js/app.js?v=104"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            app.updateNavUser();
+            if (typeof app !== 'undefined' && app.initSettingsPage) {
+                app.initSettingsPage();
+            } else {
+                console.error('App not loaded properly');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习 - 个人学习系统</title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="study-page-body">
+    <div class="study-layout">
+        <!-- 顶部学习导航 -->
+        <header class="study-header">
+            <div class="study-header-left">
+                <a href="course-detail.html" class="btn btn-icon" title="返回课程">
+                    ←
+                </a>
+                <div class="course-nav-info">
+                    <span class="nav-course-name" id="navCourseName">课程名称</span>
+                    <span class="nav-separator">/</span>
+                    <span class="nav-lesson-name" id="navLessonName">课程标题</span>
+                </div>
+            </div>
+            <div class="study-header-center">
+                <div class="lesson-nav">
+                    <button class="btn btn-nav" id="prevLessonBtn" onclick="app.prevLesson()" title="上一课">
+                        ← 上一课
+                    </button>
+                    <span class="lesson-counter">
+                        <span id="currentLessonNum">1</span> / <span id="totalLessonNum">30</span>
+                    </span>
+                    <button class="btn btn-nav" id="nextLessonBtn" onclick="app.nextLesson()" title="下一课">
+                        下一课 →
+                    </button>
+                </div>
+            </div>
+            <div class="study-header-right">
+                <button class="btn btn-secondary" id="outlineToggleHeaderBtn" onclick="app.toggleOutline()">
+                    📑 收起大纲
+                </button>
+                <button class="btn btn-secondary" onclick="app.scrollToHomework()">
+                    📝 前往作业
+                </button>
+            </div>
+        </header>
+
+        <!-- 主体内容 -->
+        <div class="study-container">
+            <!-- 左侧大纲面板（可折叠） -->
+            <aside class="outline-panel" id="outlinePanel">
+                <div class="outline-toggle-btn" id="outlineToggleBtn" onclick="app.toggleOutline()" title="收起大纲">
+                    ☰
+                </div>
+                <div class="outline-panel-header">
+                    <h3>📑 课程大纲</h3>
+                    <button class="btn btn-icon" onclick="app.toggleOutline()">✕</button>
+                </div>
+                <div class="outline-panel-content" id="outlinePanelContent">
+                    <!-- 动态填充 -->
+                </div>
+            </aside>
+
+            <!-- 学习内容区 -->
+            <main class="study-content">
+                <div class="content-wrapper">
+                    <!-- 课程标题区 -->
+                    <div class="lesson-header-section">
+                        <span class="lesson-day-badge" id="lessonDayBadge">第 1 天</span>
+                        <h1 class="lesson-title" id="lessonTitle">课程标题</h1>
+                        <div class="lesson-meta">
+                            <span class="meta-item" id="lessonDuration">⏱️ 约 1 小时</span>
+                            <span class="meta-item" id="lessonStatus">⏳ 未开始</span>
+                        </div>
+                    </div>
+
+                    <!-- 课程内容 -->
+                    <div class="lesson-content" id="lessonContent">
+                        <!-- 动态填充 -->
+                    </div>
+
+                    <!-- 课程底部操作 -->
+                    <div class="lesson-footer-actions">
+                        <button class="btn btn-secondary" id="prevLessonBottomBtn" onclick="app.prevLesson()">
+                            ← 上一课
+                        </button>
+                        <div class="action-center">
+                            <button class="btn btn-primary btn-lg" id="markCompleteBtn" onclick="app.markLessonComplete()">
+                                ✅ 标记本节课完成
+                            </button>
+                            <button class="btn btn-text" id="skipLessonBtn" onclick="app.skipLesson()" style="margin-left: 10px; color: var(--text-tertiary);">
+                                ⏭️ 跳过本课
+                            </button>
+                        </div>
+                        <button class="btn btn-secondary" id="nextLessonBottomBtn" onclick="app.nextLesson()">
+                            下一课 →
+                        </button>
+                    </div>
+
+                    <!-- 课后作业区域（新版底部设计） -->
+                    <div class="homework-section" id="homeworkSection">
+                        <div class="homework-section-header">
+                            <div class="homework-title-row">
+                                <h3>📝 课后作业与练习</h3>
+                                <span class="homework-badge" id="homeworkStatus">待完成</span>
+                            </div>
+                            <p class="homework-desc">完成作业可以帮助巩固所学知识，系统会自动批改并提供反馈</p>
+                        </div>
+                        
+                        <div class="homework-content-scrollable" id="homeworkBody">
+                            <!-- 动态填充作业题目 -->
+                        </div>
+                        
+                        <div class="homework-actions-bar" id="homeworkActions">
+                            <div class="homework-progress">
+                                <span id="homeworkProgressText">已完成 0/3 题</span>
+                            </div>
+                            <button class="btn btn-secondary" id="saveDraftBtn" onclick="app.saveHomeworkDraft()">
+                                💾 保存草稿
+                            </button>
+                            <button class="btn btn-primary btn-lg" id="submitHomeworkBtn" onclick="app.submitHomework()">
+                                🚀 提交作业
+                            </button>
+                        </div>
+
+                        <!-- 评分反馈区域（提交后显示） -->
+                        <div class="grading-feedback" id="gradingFeedback" style="display: none;">
+                            <div class="feedback-header">
+                                <div class="score-circle" id="scoreCircle">
+                                    <span class="score-number" id="scoreNumber">--</span>
+                                    <span class="score-label">分</span>
+                                </div>
+                                <div class="feedback-summary">
+                                    <h4 id="feedbackTitle">评分反馈</h4>
+                                    <p id="feedbackSummary">正在分析你的答案...</p>
+                                </div>
+                            </div>
+                            <div class="feedback-details" id="feedbackDetails">
+                                <!-- 详细反馈 -->
+                            </div>
+                            <div class="feedback-actions">
+                                <button class="btn btn-secondary" onclick="app.retryHomework()">
+                                    🔄 重新做答
+                                </button>
+                                <button class="btn btn-primary" onclick="app.viewCorrectAnswers()">
+                                    👀 查看解析
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 阅读进度条 -->
+        <div class="reading-progress-container">
+            <div class="reading-progress-bar" id="readingProgressBar"></div>
+        </div>
+        
+        <!-- 学习进度条（隐藏） -->
+        <div class="study-progress-bar" style="display: none;">
+            <div class="progress-track">
+                <div class="progress-fill" id="studyProgressFill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text" id="studyProgressText">0%</span>
+        </div>
+    </div>
+
+    <!-- 完成课程祝贺弹窗 -->
+    <div class="modal" id="completionModal">
+        <div class="modal-content modal-center">
+            <div class="completion-animation">
+                <div class="trophy-icon">🏆</div>
+                <div class="confetti">🎉</div>
+            </div>
+            <h2>恭喜完成学习！</h2>
+            <p id="completionMessage">你已经完成了今天的学习内容</p>
+            <div class="completion-actions">
+                <button class="btn btn-secondary" onclick="app.closeModal(''completionModal'')">继续浏览</button>
+                <button class="btn btn-primary" onclick="app.nextLesson()">下一课 →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 笔记侧边栏 -->
+    <div class="notes-sidebar" id="notesSidebar">
+        <div class="notes-header">
+            <h3>📝 学习笔记</h3>
+            <button class="btn btn-icon" onclick="app.toggleNotes()">✕</button>
+        </div>
+        <div class="notes-content">
+            <textarea id="lessonNotes" placeholder="记录你的学习心得、重点内容或疑问..."></textarea>
+        </div>
+        <div class="notes-footer">
+            <button class="btn btn-primary" onclick="app.saveNotes()">保存笔记</button>
+        </div>
+    </div>
+
+    <!-- 浮动工具栏 -->
+    <div class="floating-toolbar">
+        <button class="float-btn" onclick="app.toggleNotes()" title="笔记">
+            📝
+        </button>
+        <button class="float-btn" onclick="app.toggleOutline()" title="展开/收起大纲">
+            📑
+        </button>
+        <button class="float-btn" onclick="app.scrollToTop()" title="顶部">
+            ⬆️
+        </button>
+    </div>
+
+    <script src="js/storage.js?v=104"></script>
+    <script src="js/ai-service.js?v=104"></script>
+    <script src="js/app.js?v=104"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            app.updateNavUser();
+            // 检查 AIService 是否加载成功
+            if (typeof AIService === 'undefined') {
+                console.error('[Study] AIService 未加载！');
+                document.getElementById('lessonContent').innerHTML = 
+                    '<div class="error">加载失败: AI服务未初始化，请刷新页面重试</div>';
+            } else {
+                console.log('[Study] AIService 已加载', typeof AIService);
+                app.initStudyPage();
+            }
+        });
+    </script>
+</body>
+</html>

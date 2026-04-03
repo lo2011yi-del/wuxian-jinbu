@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建课程 - 个人学习系统</title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .create-course-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .create-course-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .section-title .icon {
+            font-size: 20px;
+        }
+        .section-title h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            background: white;
+            transition: all 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        .form-group .hint {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .required {
+            color: var(--danger-color);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <header class="top-nav">
+            <div class="nav-brand">
+                <span class="brand-icon">📚</span>
+                <span class="brand-text">个人学习系统</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">🏠 首页</a>
+                <a href="courses.html" class="nav-item">📖 我的课程</a>
+                <a href="settings.html" class="nav-item">⚙️ 设置</a>
+            </nav>
+            <div class="nav-user">
+                <span class="ai-badge" id="aiStatus">🟢 AI 就绪</span>
+                <a href="auth.html" class="user-login-btn">👤 登录</a>
+            </div>
+        </header>
+
+        <main class="main-container">
+            <div class="create-course-wrapper">
+                <!-- 页面标题 -->
+                <div class="page-header" style="margin-bottom: 24px;">
+                    <h1>🎯 创建新课程</h1>
+                    <p style="color: var(--text-secondary);">让 AI 为你生成专属的学习计划</p>
+                </div>
+
+                <div class="create-course-card">
+                    <form id="createCourseForm" onsubmit="event.preventDefault(); app.handleCreateCourse();">
+                        <!-- 基本信息 -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="icon">📝</span>
+                                <h3>基本信息</h3>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="courseSubject">学习主题 <span class="required">*</span></label>
+                                <input type="text" id="courseSubject" placeholder="例如：Python编程、西方哲学史、商务英语..." required>
+                                <p class="hint">输入你想学习的主题，越具体越好</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="courseLevel">学习层次 <span class="required">*</span></label>
+                                    <select id="courseLevel" required>
+                                        <option value="">请选择</option>
+                                        <option value="入门">入门 - 零基础开始</option>
+                                        <option value="初级">初级 - 有基础概念</option>
+                                        <option value="中级">中级 - 有一定经验</option>
+                                        <option value="高级">高级 - 深度学习</option>
+                                        <option value="大学">大学水平 - 系统学习</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="courseLanguage">课程语言</label>
+                                    <select id="courseLanguage">
+                                        <option value="中文">中文</option>
+                                        <option value="English">English</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 时间安排 -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="icon">📅</span>
+                                <h3>时间安排</h3>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="courseDuration">课程时长 <span class="required">*</span></label>
+                                    <select id="courseDuration" required>
+                                        <option value="">请选择</option>
+                                        <option value="7天">7天 - 快速入门</option>
+                                        <option value="14天">14天 - 系统学习</option>
+                                        <option value="30天">30天 - 深入学习</option>
+                                        <option value="3个月">3个月 (90天) - 全面掌握</option>
+                                        <option value="6个月">6个月 - 专业水平</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dailyTime">每日学习时间 <span class="required">*</span></label>
+                                    <select id="dailyTime" required>
+                                        <option value="">请选择</option>
+                                        <option value="30分钟">30分钟</option>
+                                        <option value="1小时">1小时</option>
+                                        <option value="2小时">2小时</option>
+                                        <option value="3小时">3小时</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 详细要求 -->
+                        <div class="form-section" style="border-bottom: none; padding-bottom: 0;">
+                            <div class="section-title">
+                                <span class="icon">📝</span>
+                                <h3>详细要求（可选）</h3>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="courseGoals">学习目标</label>
+                                <textarea id="courseGoals" rows="3" placeholder="例如：达到哲学本科生水平..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="courseFocus">特殊要求</label>
+                                <textarea id="courseFocus" rows="3" placeholder="例如：希望包含实际项目练习、重点关注某个领域..."></textarea>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="includeHomework" checked>
+                                    <span>包含课后作业和练习</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 提交按钮 -->
+                        <div class="form-actions">
+                            <a href="index.html" class="btn btn-secondary" style="padding: 12px 24px;">取消</a>
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 32px;">
+                                🚀 开始生成课程
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- 生成中弹窗 -->
+        <div class="modal" id="generatingModal">
+            <div class="modal-content modal-center">
+                <div style="text-align: center; padding: 40px;">
+                    <div style="width: 60px; height: 60px; border: 4px solid #f3f4f6; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                    <h3 style="margin-bottom: 12px;">⏳ 正在生成课程...</h3>
+                    <p style="color: var(--text-secondary);" id="generatingStatus">正在分析学习目标...</p>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+
+        <footer class="footer">
+            <p>个人学习系统 v1.0 | 数据存储在本地</p>
+        </footer>
+    </div>
+
+    <script src="js/storage.js?v=104"></script>
+    <script src="js/ai-service.js?v=104"></script>
+    <script src="js/app.js?v=104"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            app.updateNavUser();
+            app.initCreatePage();
+        });
+    </script>
+</body>
+</html>

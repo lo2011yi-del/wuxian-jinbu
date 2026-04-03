@@ -1,0 +1,533 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课婃柇宸ュ叿 - 个人哄学习系�?/title>
+    <link rel="stylesheet" href="css/style.css?v=104">
+    <style>
+        .debug-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .debug-section h2 {
+            margin-bottom: 16px;
+            color: #111827;
+        }
+        .info-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            width: 200px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .info-value {
+            flex: 1;
+            color: #111827;
+        }
+        .status-good {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .status-bad {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .status-warn {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+        .fix-box {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .fix-box h3 {
+            color: #92400e;
+            margin-bottom: 12px;
+        }
+        .fix-box ol {
+            margin-left: 20px;
+        }
+        .fix-box li {
+            margin-bottom: 8px;
+            color: #92400e;
+        }
+        code {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .test-button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 16px;
+        }
+        .test-button:hover {
+            background: #4338ca;
+        }
+        #apiTestResult {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <header class="top-nav">
+            <div class="nav-brand">
+                <span class="brand-icon">�?</span>
+                <span class="brand-text">课婃柇宸ュ叿<</span>
+            <</div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">🏠 连斿洖首�?</a>
+                <a href="settings.html" class="nav-item">鈿设�?璁程�?</a>
+            </nav>
+        </header>
+
+        <main class="main-container">
+            <h1 style="margin-bottom: 24px;">�?习系统课婃柇<</h1>
+
+            <!-- 鐜澧冩娴?-->
+            <div class="debug-section">
+                <h2>�?娴忚堝櫒鐜澧<</h2>
+                <div id="browserInfo">
+                    鍔犺浇个?..
+                <</div>
+            <</div>
+
+            <!-- 瀛樺偍妫�?-->
+            <div class="debug-section">
+                <h2>�?鏈鍦板瓨�?</h2>
+                <div id="storageInfo">
+                    鍔犺浇个?..
+                <</div>
+            <</div>
+
+            <!-- AI 璁程疆妫�?-->
+            <div class="debug-section">
+                <h2>�?AI 閰嶇�?</h2>
+                <div id="aiInfo">
+                    鍔犺浇个?..
+                <</div>
+                <button class="test-button" onclick="testAPI()">И 娴嬭�?API 连炴�?</button>
+                <button class="test-button" style="background: #10b981; margin-left: 10px;" onclick="testWithStandardModel()">И 鐢ㄦ爣出嗘ā鍨嬫祴�?</button>
+                <button class="test-button" style="background: #2563eb; margin-left: 10px;" onclick="testWithDeepseek()">И �?DeepSeek 娴嬭�?</button>
+                <button class="test-button" style="background: #f59e0b; margin-left: 10px;" onclick="fixApiKey()">�?�?API Key<</button>
+                <div id="apiTestResult" style="display: none;"><</div>
+            <</div>
+
+            <!-- 澶嶅缓璁 -->
+            <div class="debug-section" id="fixSection" style="display: none;">
+                <h2>�?澶嶅缓璁<</h2>
+                <div id="fixContent"><</div>
+            <</div>
+        </main>
+    <</div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/ai-service.js"></script>
+    <script>
+        // 妫娴嬫祻瑙堝櫒鐜�?
+        function checkBrowser() {
+            const info = {
+                protocol: window.location.protocol,
+                host: window.location.host,
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                localStorage: typeof(Storage) !== 'undefined',
+                fetch: typeof(fetch) !== 'undefined',
+                promise: typeof(Promise) !== 'undefined'
+            };
+
+            const isFile = info.protocol === 'file:';
+            const isLocalhost = info.host.includes('localhost') || info.host.includes('127.0.0.1');
+
+            let html = `
+                <div class="info-row">
+                    <div class="info-label">璁块棶鍗�?</div>
+                    <div class="info-value ${isFile ? 'status-bad' : 'status-good'}">
+                        ${info.protocol} ${isFile ? '�?(学氬�?API 澶辫�?' : '�?}
+                    <</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">褰撳墠鍦板潃<</div>
+                    <div class="info-value">${info.url}<</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">个绘満<</div>
+                    <div class="info-value ${isLocalhost ? 'status-good' : 'status-warn'}">
+                        ${info.host} ${isLocalhost ? '�?(鏈鍦版湇鍔�?' : '鈿狅�?(闈炴湰鍦版湇鍔″櫒)'}
+                    <</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">LocalStorage<</div>
+                    <div class="info-value ${info.localStorage ? 'status-good' : 'status-bad'}">
+                        ${info.localStorage ? '�?鏀�? : '�?个嶆敮鎸?}
+                    <</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">Fetch API<</div>
+                    <div class="info-value ${info.fetch ? 'status-good' : 'status-bad'}">
+                        ${info.fetch ? '�?鏀�? : '�?个嶆敮鎸?}
+                    <</div>
+                <</div>
+            `;
+
+            document.getElementById('browserInfo').innerHTML = html;
+
+            // 濡傛灉鏈夐棶棰橈索鏄程ず澶嶅缓璁
+            if (isFile) {
+                showFix('file');
+            }
+        }
+
+        // 妫娴嬪瓨�?
+        function checkStorage() {
+            try {
+                const courses = Storage.getCourses();
+                const settings = Storage.getSettings();
+                const stats = Storage.getStatistics();
+
+                const html = `
+                    <div class="info-row">
+                        <div class="info-label">课程程鏁伴噺<</div>
+                        <div class="info-value">${courses.length} �?</div>
+                    <</div>
+                    <div class="info-row">
+                        <div class="info-label">宸茶�?API Key<</div>
+                        <div class="info-value ${settings.aiApiKey ? 'status-good' : 'status-bad'}">
+                            ${settings.aiApiKey ? '�?宸茶�? : '�?鏈璁�?}
+                        <</div>
+                    <</div>
+                    <div class="info-row">
+                        <div class="info-label">API Key 闀垮害<</div>
+                        <div class="info-value">${settings.aiApiKey ? settings.aiApiKey.length + ' 瀛楃' : 'N/A'}<</div>
+                    <</div>
+                    <div class="info-row">
+                        <div class="info-label">AI 鎻愪緵鍟<</div>
+                        <div class="info-value">${settings.aiProvider || '鏈璁�?}<</div>
+                    <</div>
+                    <div class="info-row">
+                        <div class="info-label">AI 妯″�?</div>
+                        <div class="info-value">${settings.aiModel || '鏈璁�?}<</div>
+                    <</div>
+                    <div class="info-row">
+                        <div class="info-label">已完成课�?</div>
+                        <div class="info-value">${stats.completedLessons}<</div>
+                    <</div>
+                `;
+
+                document.getElementById('storageInfo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('storageInfo').innerHTML = 
+                    `<div class="status-bad">课录程瀛樺偍澶辫触: ${e.message}<</div>`;
+            }
+        }
+
+        // 妫娴?AI 閰嶇�?
+        function checkAI() {
+            const settings = Storage.getSettings();
+            
+            if (!settings.aiApiKey) {
+                document.getElementById('aiInfo').innerHTML = 
+                    '<div class="status-bad">�?鏈璁�?API Key锛岃峰厛鍦ㄨ程疆殁㈤潰閰嶇疆<</div>';
+                return;
+            }
+
+            const rawKey = settings.aiApiKey;
+            // 妫鏌ユ槸鍚﹀寘鍚个嶅彲瑙佸瓧�?
+            const hasWhitespace = /\s/.test(rawKey);
+            const sanitizedKey = rawKey.replace(/\s/g, '');
+            
+            const keyPreview = sanitizedKey.substring(0, 15) + '...' + 
+                              sanitizedKey.substring(sanitizedKey.length - 4);
+            
+            // 妫鏌ュ紑澶村瓧绗?
+            const firstChars = rawKey.substring(0, 10);
+            const charCodes = [];
+            for (let i = 0; i < Math.min(rawKey.length, 10); i++) {
+                charCodes.push(rawKey.charCodeAt(i));
+            }
+            
+            const html = `
+                <div class="info-row">
+                    <div class="info-label">API Key 棰勮<</div>
+                    <div class="info-value">${keyPreview}<</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">鍘熷 Key 闀垮害<</div>
+                    <div class="info-value">${rawKey.length} 瀛楃<</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">娓呯悊鍚暱度<</div>
+                    <div class="info-value ${rawKey.length !== sanitizedKey.length ? 'status-warn' : 'status-good'}">
+                        ${sanitizedKey.length} 瀛楃 ${rawKey.length !== sanitizedKey.length ? '鈿狅�?鍖呭惈澶氫綑绌虹櫧瀛楃' : '�?}
+                    <</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">Key 煎紡<</div>
+                    <div class="info-value ${sanitizedKey.startsWith('sk-') ? 'status-good' : 'status-warn'}">
+                        ${sanitizedKey.startsWith('sk-') ? '�?煎紡姝ｇ' (sk-...)' : '鈿狅�?度旇�?sk- 寮澶达索开為檯: ' + firstChars}
+                    <</div>
+                <</div>
+                ${!sanitizedKey.startsWith('sk-') ? `
+                <div class="info-row">
+                    <div class="info-label">�?0瀛楃︾紪�?</div>
+                    <div class="info-value">[${charCodes.join(', ')}]<</div>
+                <</div>
+                ` : ''}
+                <div class="info-row">
+                    <div class="info-label">鍖呭惈绌虹櫧瀛楃<</div>
+                    <div class="info-value ${hasWhitespace ? 'status-warn' : 'status-good'}">
+                        ${hasWhitespace ? '鈿狅�?鏄锛堝凡鑷鍔ㄦ竻鐞嗭�? : '�?�?}
+                    <</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">AI 鎻愪緵鍟<</div>
+                    <div class="info-value">${settings.aiProvider}<</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">妯″�?</div>
+                    <div class="info-value">${settings.aiModel}<</div>
+                <</div>
+                <div class="info-row">
+                    <div class="info-label">开為檯课锋眰妯″�?</div>
+                    <div class="info-value">${settings.aiModel || 'kimi-coding/k2p5'}<</div>
+                <</div>
+            `;
+
+            document.getElementById('aiInfo').innerHTML = html;
+        }
+
+        // �?API Key
+        function fixApiKey() {
+            const settings = Storage.getSettings();
+            if (!settings.aiApiKey) {
+                alert('�?鏈璁�?API Key');
+                return;
+            }
+            
+            const rawKey = settings.aiApiKey;
+            const fixedKey = rawKey.replace(/\s/g, '');
+            
+            if (rawKey === fixedKey) {
+                alert('�?API Key 宸茬粡鏄骞学噣的勶索鏃犻渶澶');
+                return;
+            }
+            
+            if (confirm(`妫娴嬪埌 API Key 鍖呭�?${rawKey.length - fixedKey.length} 个澶氫綑瀛楃︼紙绌烘�?鎹㈣岀瓑锛夈俓n\n娓呯悊鍓? ${rawKey.length} 瀛楃\n娓呯悊鍚? ${fixedKey.length} 瀛楃\n\n鏄鍚繚瀛樹慨澶嶅悗�?Key锛焋)) {
+                settings.aiApiKey = fixedKey;
+                Storage.saveSettings(settings);
+                alert('�?API Key 宸蹭慨澶嶅苟濆瓨锛佽部噸鏂版祴课曡繛探ャ?);
+                checkAI(); // 鍒锋柊鏄程ず
+            }
+        }
+
+        // 浣跨�?DeepSeek 娴嬭�?API
+        async function testWithDeepseek() {
+            const resultDiv = document.getElementById('apiTestResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '浣跨�?DeepSeek API 娴嬭瘯个?..';
+
+            try {
+                const settings = Storage.getSettings();
+                
+                if (!settings.aiApiKey) {
+                    resultDiv.textContent = '�?鏈璁�?API Key';
+                    return;
+                }
+
+                const apiKey = settings.aiApiKey.replace(/\s/g, '');
+                const startTime = Date.now();
+                
+                const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-chat',  // DeepSeek V3
+                        messages: [{ role: 'user', content: 'Hi' }],
+                        max_tokens: 5
+                    })
+                });
+
+                const duration = Date.now() - startTime;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `�?DeepSeek 娴嬭瘯鎴愬姛锛乗n哲嶅簲鏃堕棿: ${duration}ms\n鐘舵佺爜: ${response.status}\n妯″�? ${data.model || 'N/A'}\n\n�?浣的 Key 鍙从ョ敤�?DeepSeek銆傝峰湪璁程疆个灏嗘彁渚涘晢鏀逛负 DeepSeek锛屽苟退夋嫨航瑰簲妯″瀷銆�?
+                    resultDiv.style.background = '#d1fae5';
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `�?DeepSeek 娴嬭瘯澶辫触\n鐘舵佺爜: ${response.status}\n哲嶅�? ${text.substring(0, 500)}\n\n课存槑锛氬綋�?Key 鏃犳硶鐢ㄤ簬 DeepSeek API銆俙;
+                    resultDiv.style.background = '#fee2e2';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `�?课锋眰出洪敊\n閿欒: ${error.message}`;
+                resultDiv.style.background = '#fee2e2';
+            }
+        }
+
+        // 浣跨敤囧噯妯″瀷娴嬭瘯 API
+        async function testWithStandardModel() {
+            const resultDiv = document.getElementById('apiTestResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '浣跨敤囧噯妯″�?moonshot-v1-8k 娴嬭瘯个?..';
+
+            try {
+                const settings = Storage.getSettings();
+                
+                if (!settings.aiApiKey) {
+                    resultDiv.textContent = '�?鏈璁�?API Key';
+                    return;
+                }
+
+                const apiKey = settings.aiApiKey.replace(/\s/g, '');
+                const startTime = Date.now();
+                
+                const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'moonshot-v1-8k',  // 浣跨敤囧噯妯″�?
+                        messages: [{ role: 'user', content: 'Hi' }],
+                        max_tokens: 5
+                    })
+                });
+
+                const duration = Date.now() - startTime;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `�?囧噯妯″瀷娴嬭瘯鎴愬姛锛乗n哲嶅簲鏃堕棿: ${duration}ms\n鐘舵佺爜: ${response.status}\n妯″�? ${data.model || 'N/A'}\n\n�?课存槑锛氫綘�?Key 鏈夋晥锛屼絾鍙鑳芥棤娉曡块棶 "${settings.aiModel || 'kimi-coding/k2p5'}" 妯″瀷銆傝峰湪璁程疆个灏嗘ā鍨嬫敼�?moonshot-v1-8k 鎴栧叾从栧彲鐢ㄦā鍨嬨�?
+                    resultDiv.style.background = '#d1fae5';
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `�?囧噯妯″瀷涔熷け璐\n鐘舵佺爜: ${response.status}\n哲嶅�? ${text.substring(0, 500)}\n\n课存槑锛欿ey 鍙鑳界湡的勬棤鏁堬索鎴栬呰处鎴锋湁闂棰樸�?
+                    resultDiv.style.background = '#fee2e2';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `�?课锋眰出洪敊\n閿欒: ${error.message}`;
+                resultDiv.style.background = '#fee2e2';
+            }
+        }
+
+        // 娴嬭�?API
+        async function testAPI() {
+            const resultDiv = document.getElementById('apiTestResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '娴嬭瘯个?..';
+
+            try {
+                const settings = Storage.getSettings();
+                
+                if (!settings.aiApiKey) {
+                    resultDiv.textContent = '�?鏈璁�?API Key';
+                    return;
+                }
+
+                // 娓呯�?API Key
+                const apiKey = settings.aiApiKey.replace(/\s/g, '');
+                
+                console.log('[Debug] 鍘熷 Key 闀垮害:', settings.aiApiKey.length);
+                console.log('[Debug] 娓呯悊鍚?Key 闀垮害:', apiKey.length);
+                console.log('[Debug] Key 寮澶?', apiKey.substring(0, 15));
+
+                const startTime = Date.now();
+                
+                const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: settings.aiModel || 'kimi-coding/k2p5',
+                        messages: [{ role: 'user', content: 'Hi' }],
+                        max_tokens: 5
+                    })
+                });
+
+                const duration = Date.now() - startTime;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `�?连炴帴鎴愬姛锛乗n哲嶅簲鏃堕棿: ${duration}ms\n鐘舵佺爜: ${response.status}\n妯″�? ${data.model || 'N/A'}`;
+                    resultDiv.style.background = '#d1fae5';
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `�?连炴帴澶辫触\n鐘舵佺爜: ${response.status}\n哲嶅�? ${text.substring(0, 500)}`;
+                    resultDiv.style.background = '#fee2e2';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `�?课锋眰出洪敊\n閿欒: ${error.message}\n\n鍙鑳藉師�?\n1. �?file:// 鍗忚鎵撳紑锛堝繀椤讳娇鐢?http://localhost:8080锛塡n2. 缃戠粶连炴帴闂棰榎n3. API Key 鏃犳晥`;
+                resultDiv.style.background = '#fee2e2';
+            }
+        }
+
+        // 鏄程ず澶嶅缓�?
+        function showFix(type) {
+            const section = document.getElementById('fixSection');
+            const content = document.getElementById('fixContent');
+            section.style.display = 'block';
+
+            if (type === 'file') {
+                content.innerHTML = `
+                    <div class="fix-box">
+                        <h3>鈿狅�?妫娴嬪埌浣犳槸鐩存帴从庢枃从舵墦寮的勶紙file://�?</h3>
+                        <p>连欎細航栏嚧娴忚堝櫒闃绘?API 课锋眰锛屽繀椤绘敼鐢ㄦ湰鍦版湇鍔″櫒璁块棶銆<</p>
+                        <ol>
+                            <li><strong>鏂规硶个锛堟帹鑽愶級�?</strong>鍙屽嚮连�?<code>start-server.bat<</code><</li>
+                            <li>绛夊緟鏄程ず "�?鏈嶅姟鍣ㄥ惎鍔ㄦ垚鍔?"<</li>
+                            <li>娴忚堝櫒学氳嚜鍔ㄦ墦�?<code>http://localhost:8080<</code><</li>
+                            <li>鍦ㄦ柊鎵撳紑的勯㈤潰个閲嶆柊娴嬭�?</li>
+                        </ol>
+                        <p style="margin-top: 12px;"><strong>鎴栬呬娇鐢ㄥ叾从栨柟寮忓惎鍔ㄦ湇鍔″櫒�?</strong><</p>
+                        <ul>
+                            <li>Python: <code>python -m http.server 8080<</code><</li>
+                            <li>Node.js: <code>npx serve . -l 8080<</code><</li>
+                            <li>VS Code: 开�?Live Server 鎵╁睍锛屽彸�?index.html �?"Open with Live Server"<</li>
+                        </ul>
+                    <</div>
+                `;
+            }
+        }
+
+        // 鍒濆�?
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBrowser();
+            checkStorage();
+            checkAI();
+        });
+    </script>
+</body>
+</html>
